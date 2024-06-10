@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProjMongoDB20220714.Services;
 using ProjMongoDBAPI.Models;
 using ProjMongoDBAPI.Services;
 
@@ -19,7 +20,7 @@ namespace ProjMongoDBAPI.Controllers
         [HttpGet]
         public ActionResult<List<Address>> Get() 
         {
-            return _addressService.GetAddresses();
+            return _addressService.Get();
         }
 
         [HttpGet("{id:length(24)}", Name = "GetAddress")]
@@ -27,6 +28,13 @@ namespace ProjMongoDBAPI.Controllers
         {
             return _addressService.Get(id);
         }
+
+        [HttpGet("{cep:length(8)}")]
+        public ActionResult<AddressDTO> GetPostOffice(string cep)
+        {
+            return PostOfficesService.GetAddress(cep).Result;
+        }
+
 
         [HttpPost]
         public ActionResult<Address> Create(Address address) 

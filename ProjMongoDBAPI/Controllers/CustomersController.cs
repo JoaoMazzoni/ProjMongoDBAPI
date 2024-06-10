@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProjMongoDB20220714.Services;
 using ProjMongoDBAPI.Models;
 using ProjMongoDBAPI.Services;
 
@@ -10,10 +11,12 @@ namespace ProjMongoDBAPI.Controllers
     public class CustomersController : ControllerBase
     {
         private readonly CustomerService _customerService;
+        private readonly AddressService _addressService;
 
-        public CustomersController(CustomerService customerService)
+        public CustomersController(CustomerService customerService, AddressService addressService)
         {
             _customerService = customerService;
+            _addressService = addressService;
         }
 
         [HttpGet]
@@ -23,7 +26,7 @@ namespace ProjMongoDBAPI.Controllers
         public ActionResult<Customer> Get(string Id)
         {
             var customer = _customerService.Get(Id);
-            if(customer == null)
+            if (customer == null)
             {
                 return NotFound();
             }
@@ -33,15 +36,18 @@ namespace ProjMongoDBAPI.Controllers
         [HttpPost]
         public ActionResult<Customer> Post(Customer customer)
         {
+            Address address = _addressService.Get(customer.Address.Id);
+            customer.Address = address;
+            
             var c = _customerService.Create(customer);
 
-            if(customer == null)
+            if (c == null)
             {
                 return BadRequest();
             }
 
-            return CreatedAtRoute("GetCustomerById", new {id = customer.Id}, c);  
-            
+            return CreatedAtRoute("GetCustomerById", new { id = c.Id }, c);
+
         }
     }
 }

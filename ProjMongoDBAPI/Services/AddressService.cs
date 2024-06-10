@@ -1,8 +1,9 @@
-﻿using MongoDB.Driver;
+﻿﻿using MongoDB.Driver;
 using ProjMongoDBAPI.Models;
 using ProjMongoDBAPI.Utils;
+using System.Collections.Generic;
 
-namespace ProjMongoDBAPI.Services
+namespace ProjMongoDB20220714.Services
 {
     public class AddressService
     {
@@ -10,27 +11,23 @@ namespace ProjMongoDBAPI.Services
 
         public AddressService(IProjMongoDBAPIDataBaseSettings settings)
         {
-            var client= new MongoClient(settings.ConnectionString);
+            var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
             _address = database.GetCollection<Address>(settings.AddressCollectionName);
-
         }
 
-        public List<Address> GetAddresses() => _address.Find(address => true).ToList();
+        public List<Address> Get() =>
+            _address.Find(address => true).ToList();
 
-        public Address Get(string Id) => _address.Find<Address>(address => address.Id == Id).FirstOrDefault();
+
+        public Address Get(string id) =>
+            _address.Find<Address>(address => address.Id == id).FirstOrDefault();
+
+
         public Address Create(Address address)
         {
             _address.InsertOne(address);
             return address;
         }
-
-
-
-
-        
-            
-            
-        
     }
 }
